@@ -29,6 +29,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  thirdScreenContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'flex-end',
+  },
+  thirdScreenContentContainer: {
+    height: 120,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 const mainNavigationKey = 'mainNavigation';
@@ -48,13 +59,14 @@ const SecondScreen = memo(({
     navigate,
   },
 }) => {
-  useLayoutEffect(() => {
+  const onPress = useCallback(() => {
     navigate('thirdScreen');
   }, []);
 
   return (
     <View style={styles.container}>
       <Text>Second screen content</Text>
+      <Button title="Push" onPress={onPress} />
     </View>
   );
 });
@@ -70,12 +82,15 @@ const ThirdScreen = memo(({
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text>Third screen content</Text>
-      <Button title="Push" onPress={onPress} />
+    <View style={styles.thirdScreenContainer}>
+      <View style={styles.thirdScreenContentContainer}>
+        <Text>Third screen content</Text>
+      </View>
     </View>
   );
 });
+
+ThirdScreen.navigationOptions = { cardStyle: { backgroundColor: 'transparent' } };
 
 const StackNavigator = createStackNavigator(
   {

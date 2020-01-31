@@ -95,7 +95,6 @@ export const createNavigation = (navigationRouteName: string) => ({
   ) => {
     const navigator = navigatorsByName[navigationRouteName];
     if (navigator != null) {
-      console.log('a')
       const pushAction = StackActions.push({
         routeName,
         params,
