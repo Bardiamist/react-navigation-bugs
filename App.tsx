@@ -1,8 +1,6 @@
 import React, {
   memo,
-  useRef,
   useCallback,
-  useLayoutEffect,
 } from 'react';
 import {
   StyleSheet,
@@ -14,14 +12,8 @@ import {
   createStackNavigator,
 } from 'react-navigation-stack';
 import {
-  createSwitchNavigator,
   createAppContainer,
 } from 'react-navigation';
-
-import {
-  createNavigation,
-  setNavigationContainer,
-} from './navigationHelper';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,12 +21,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  thirdScreenContainer: {
+  modalScreenContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     justifyContent: 'flex-end',
   },
-  thirdScreenContentContainer: {
+  modalScreenContentContainer: {
     height: 120,
     backgroundColor: 'white',
     justifyContent: 'center',
@@ -42,99 +34,51 @@ const styles = StyleSheet.create({
   },
 });
 
-const mainNavigationKey = 'mainNavigation';
-
-export const mainNavigation = createNavigation(mainNavigationKey);
-
-const FirstScreen = memo(() => {
-  return (
-    <View style={styles.container}>
-      <Text>First screen content</Text>
-    </View>
-  );
-});
-
-const SecondScreen = memo(({
+const MainScreen = memo(({
   navigation: {
     navigate,
   },
 }) => {
   const onPress = useCallback(() => {
-    navigate('thirdScreen');
+    navigate('modalScreen');
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Second screen content</Text>
-      <Button title="Push" onPress={onPress} />
+      <Text>Main screen content</Text>
+      <Button title="Open modal" onPress={onPress} />
     </View>
   );
 });
 
-const ThirdScreen = memo(({
-  navigation: {
-    push,
-  },
-}) => {
-  const onPress = useCallback(() => {
-    // push('main');
-    mainNavigation.push('secondScreen');
-  }, []);
-
+const ModalScreen = memo(() => {
   return (
-    <View style={styles.thirdScreenContainer}>
-      <View style={styles.thirdScreenContentContainer}>
-        <Text>Third screen content</Text>
+    <View style={styles.modalScreenContainer}>
+      <View style={styles.modalScreenContentContainer}>
+        <Text>Modal screen content</Text>
       </View>
     </View>
   );
 });
 
-ThirdScreen.navigationOptions = { cardStyle: { backgroundColor: 'transparent' } };
+ModalScreen.navigationOptions = { cardStyle: { backgroundColor: 'transparent' } };
 
 const StackNavigator = createStackNavigator(
   {
-    firstScreen: {
-      screen: FirstScreen,
+    mainScreen: {
+      screen: MainScreen,
     },
-    secondScreen: {
-      screen: SecondScreen,
-    },
-    thirdScreen: {
-      screen: ThirdScreen,
+    modalScreen: {
+      screen: ModalScreen,
     },
   },
   {
-    initialRouteName: 'firstScreen',
+    initialRouteName: 'mainScreen',
   },
 );
 
-const SwitchNavigator = createSwitchNavigator(
-  {
-    splash: {
-      screen: View,
-    },
-    mainStackNavigator: {
-      screen: StackNavigator,
-    },
-    anotherStack: {
-      screen: View,
-    },
-  },
-  {
-    initialRouteName: 'splash',
-  },
-);
-
-const AppContainer = createAppContainer(SwitchNavigator);
+const AppContainer = createAppContainer(StackNavigator);
 
 export default memo(() => {
-  const appContainerRef = useRef(null);
-
-  useLayoutEffect(() => {
-    setNavigationContainer(mainNavigationKey, appContainerRef);
-    mainNavigation.reset('secondScreen');
-  }, []);
-
-  return <AppContainer ref={appContainerRef} />;
+  return <AppContainer />;
 });
